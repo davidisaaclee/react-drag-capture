@@ -70,10 +70,10 @@ class DragCapture extends React.Component {
 			return;
 		}
 
-		window.addEventListener(
+		document.addEventListener(
 			'mousemove',
 			this.updateTrackingFromMouseMove);
-		window.addEventListener(
+		document.addEventListener(
 			'mouseup', 
 			this.stopTrackingFromMouseUp);
 		this.isTrackingMouse = true;
@@ -84,8 +84,8 @@ class DragCapture extends React.Component {
 			return;
 		}
 
-		window.removeEventListener('mousemove', this.updateTrackingFromMouseMove);
-		window.removeEventListener('mouseup', this.stopTrackingFromMouseUp);
+		document.removeEventListener('mousemove', this.updateTrackingFromMouseMove);
+		document.removeEventListener('mouseup', this.stopTrackingFromMouseUp);
 		this.isTrackingMouse = false;
 	}
 
@@ -137,8 +137,8 @@ class DragCapture extends React.Component {
 	}
 
 	addTouchEventListeners() {
-		window.addEventListener('touchmove', this.updateTrackingFromTouch);
-		window.addEventListener('touchend', this.stopTrackingFromTouch);
+		document.addEventListener('touchmove', this.updateTrackingFromTouch);
+		document.addEventListener('touchend', this.stopTrackingFromTouch);
 	}
 
 	removeTouchEventListenersIfNecessary() {
@@ -146,8 +146,8 @@ class DragCapture extends React.Component {
 			return;
 		}
 
-		window.removeEventListener('touchmove', this.updateTrackingFromTouch);
-		window.removeEventListener('touchend', this.stopTrackingFromTouch);
+		document.removeEventListener('touchmove', this.updateTrackingFromTouch);
+		document.removeEventListener('touchend', this.stopTrackingFromTouch);
 	}
 
 	// Assumes that event handlers listed in `pointerState`
