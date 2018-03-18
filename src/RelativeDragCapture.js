@@ -1,5 +1,5 @@
 import React from 'react';
-import MeasureBounds from './MeasureBounds';
+import MeasureBounds from '@davidisaaclee/react-measure-bounds';
 import DragCapture from './DragCapture';
 
 import { isValidHandler, relativePointInside } from './utility';

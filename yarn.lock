@@ -44,6 +44,12 @@
   dependencies:
     arrify "^1.0.1"
 
+"@davidisaaclee/react-measure-bounds@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@davidisaaclee/react-measure-bounds/-/react-measure-bounds-0.1.0.tgz#a3627ae9b3ff1fa97b45c7b23531ae0b060647e9"
+  dependencies:
+    "@davidisaaclee/react-queue" "^0.2.0"
+
 "@davidisaaclee/react-queue@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@davidisaaclee/react-queue/-/react-queue-0.2.0.tgz#354f5641329f52612b5c718805808b981c82004e"
