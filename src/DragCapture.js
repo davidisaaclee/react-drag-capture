@@ -230,9 +230,14 @@ class DragCapture extends React.Component {
 	}
 };
 
+// Point ::= { x: number, y: number }
+
 DragCapture.propTypes = {
+	// dragDidBegin :: (string, Point) -> ()
 	dragDidBegin: PropTypes.func,
+	// dragDidMove :: (string, Point) -> ()
 	dragDidMove: PropTypes.func,
+	// dragDidEnd :: (string, Point) -> ()
 	dragDidEnd: PropTypes.func,
 };
 
