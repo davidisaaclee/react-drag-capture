@@ -4,6 +4,9 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 import { withState } from '@dump247/storybook-state';
 import { DragCapture, RelativeDragCapture } from '../src';
+import {
+	clientPositionFromMouseEvent, clientPositionFromTouch
+} from '../src/utility';
 import MeasureBounds from '@davidisaaclee/react-measure-bounds';
 
 const AbsoluteCursor = styled.span.attrs({
@@ -36,12 +39,57 @@ const Cursor = styled.span.attrs({
 	transform: translate(-50%, -50%);
 `;
 
+function velocityCursorStateReducer(prevCursorState, input) {
+	if (input.type === 'mouse') {
+		switch (input.event.type) {
+			case 'mousedown':
+			case 'mousemove':
+				const clientPosition = clientPositionFromMouseEvent(input.event);
+				const delta = prevCursorState == null
+					? { x: 0, y: 0 }
+					: {
+						x: clientPosition.x - prevCursorState.clientPosition.x,
+						y: clientPosition.y - prevCursorState.clientPosition.y,
+					};
+				return {
+					delta,
+					clientPosition
+				};
+				break;
+
+			case 'mouseup':
+				return null;
+				break;
+		}
+	} else if (input.type === 'touch') {
+		switch (input.event.type) {
+			case 'touchstart':
+			case 'touchmove':
+				const clientPosition = clientPositionFromTouch(input.touch);
+				const delta = prevCursorState == null
+					? { x: 0, y: 0 }
+					: {
+						x: clientPosition.x - prevCursorState.clientPosition.x,
+						y: clientPosition.y - prevCursorState.clientPosition.y,
+					};
+				return {
+					delta,
+					clientPosition
+				};
+				break;
+
+			case 'touchend':
+				return null;
+		}
+	}
+}
+
 storiesOf('DragCapture', module)
   .add('basic', withState({}, (store) => (
 		<DragCapture
-			dragDidBegin={(cursorID, position) => store.set({ [cursorID]: position })}
-			dragDidMove={(cursorID, position) => store.set({ [cursorID]: position })}
-			dragDidEnd={(cursorID, position) => store.set({ [cursorID]: undefined })}
+			dragDidBegin={(cursorID, { clientPosition }) => store.set({ [cursorID]: clientPosition })}
+			dragDidMove={(cursorID, { clientPosition }) => store.set({ [cursorID]: clientPosition })}
+			dragDidEnd={(cursorID) => store.set({ [cursorID]: undefined })}
 		>
 			<div style={{
 				width: 300,
@@ -61,9 +109,23 @@ storiesOf('DragCapture', module)
   )))
   .add('relative position', withState({}, (store) => (
 		<RelativeDragCapture
-			dragDidBegin={(cursorID, position) => store.set({ [cursorID]: position })}
-			dragDidMove={(cursorID, position) => store.set({ [cursorID]: position })}
-			dragDidEnd={(cursorID, position) => store.set({ [cursorID]: undefined })}
+			dragDidBegin={(cursorID, cursorState) => {
+				cursorState
+					.then(({ relativePosition }) => {
+						store.set({ [cursorID]: relativePosition })
+					})
+			}}
+			dragDidMove={(cursorID, cursorState) => cursorState
+					.then(({ relativePosition }) => {
+						if (store.state[cursorID] != null) {
+							store.set({ [cursorID]: relativePosition });
+						}
+					})}
+			dragDidEnd={(cursorID, cursorState) => {
+				cursorState.then(_ => {
+					store.set({ [cursorID]: undefined });
+				});
+			}}
 		>
 			<div style={{
 				position: 'relative',
@@ -81,6 +143,29 @@ storiesOf('DragCapture', module)
 			}
 		</div>
 		</RelativeDragCapture>
+  )))
+  .add('custom reducer', withState({}, (store) => (
+		<DragCapture
+			dragDidBegin={(cursorID, { clientPosition }) => store.set({ [cursorID]: clientPosition })}
+			dragDidMove={(cursorID, { clientPosition }) => store.set({ [cursorID]: clientPosition })}
+			dragDidEnd={(cursorID) => store.set({ [cursorID]: undefined })}
+			reduceCursorState={velocityCursorStateReducer}
+		>
+			<div style={{
+				width: 300,
+				height: 300,
+				backgroundColor: '#eee',
+			}}>
+			{
+				Object.keys(store.state)
+				.map(cursorID => ({ cursorID, position: store.state[cursorID] }))
+				.filter(({ position }) => position != null)
+				.map(({ cursorID, position }) => (
+					<AbsoluteCursor key={cursorID} position={position} />
+				))
+			}
+		</div>
+	</DragCapture>
   )))
 
 
