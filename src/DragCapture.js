@@ -31,7 +31,7 @@ const inputObjsFromTouchEvent = evt => {
 		evt.persist();
 	}
 
-	evt.changedTouches.map(touch => ({
+	return Array.from(evt.changedTouches).map(touch => ({
 		type: 'touch',
 		event: evt,
 		touch
@@ -136,7 +136,7 @@ class DragCapture extends React.Component {
 
 	updateTrackingFromTouch(evt) {
 		inputObjsFromTouchEvent(evt)
-			.forEach(input => this.beginTracking(
+			.forEach(input => this.updateTrackingPosition(
 				pointerIDFromTouch(input.touch),
 				input));
 
@@ -145,7 +145,7 @@ class DragCapture extends React.Component {
 
 	stopTrackingFromTouch(evt) {
 		inputObjsFromTouchEvent(evt)
-			.forEach(input => this.beginTracking(
+			.forEach(input => this.stopTracking(
 				pointerIDFromTouch(input.touch),
 				input));
 
