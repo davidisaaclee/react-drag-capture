@@ -1,6 +1,6 @@
 # react-drag-capture
 A convenience React component for succinctly managing positions of multiple mouse
-and touch pointers.
+and touch pointers, even as they move outside of the component.
 
 A pointer is tracked once a `touchstart` or `mousedown` event occurs within the
 `DragCapture` element, and continues to be tracked until the corresponding `mouseup`
