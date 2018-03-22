@@ -13,14 +13,13 @@ tracked even when dragged outside of the `DragCapture` element.**
 ```jsx
 import { DragCapture, RelativeDragCapture } from '@davidisaaclee/react-drag-capture';
 
-// `position`s from `DragCapture` will be client position of pointer
 <DragCapture
   dragDidBegin={(pointerID, { clientPosition }) => console.log(`${pointerID}: Began drag at (${clientPosition.x}, ${clientPosition.y})`)}
   dragDidMove={(pointerID, { clientPosition }) => console.log(`${pointerID}: Moved drag at (${clientPosition.x}, ${clientPosition.y})`)}
   dragDidEnd={(pointerID) => console.log(`${pointerID}: Ended drag`)}
 />
 
-// `position`s from `RelativeDragCapture` will be between (0, 0) and (1, 1), relative to the `RelativeDragCapture` element.
+// `relativePosition`s from `RelativeDragCapture` will be between (0, 0) and (1, 1), relative to the `RelativeDragCapture` element.
 // Top-left of the element is (0, 0), bottom-right is (1, 1).
 <RelativeDragCapture
   dragDidBegin={(pointerID, { relativePosition }) => console.log(`${pointerID}: Began drag at (${relativePosition.x}, ${relativePosition.y})`)}
