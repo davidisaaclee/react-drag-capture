@@ -167,5 +167,31 @@ storiesOf('DragCapture', module)
 		</div>
 	</DragCapture>
   )))
+  .add('custom should track logic', withState({}, (store) => (
+		<DragCapture
+			shouldTrackDrag={({ clientPosition }) => {
+				// Only track when cursor begins in top-half of bounds.
+				return clientPosition.y < 150
+			}}
+			dragDidBegin={(cursorID, { clientPosition }) => store.set({ [cursorID]: clientPosition })}
+			dragDidMove={(cursorID, { clientPosition }) => store.set({ [cursorID]: clientPosition })}
+			dragDidEnd={(cursorID) => store.set({ [cursorID]: undefined })}
+		>
+			<div style={{
+				width: 300,
+				height: 300,
+				backgroundColor: '#eee',
+			}}>
+			{
+				Object.keys(store.state)
+				.map(cursorID => ({ cursorID, position: store.state[cursorID] }))
+				.filter(({ position }) => position != null)
+				.map(({ cursorID, position }) => (
+					<AbsoluteCursor key={cursorID} position={position} />
+				))
+			}
+		</div>
+	</DragCapture>
+  )))
 
 

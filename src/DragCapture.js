@@ -176,6 +176,24 @@ class DragCapture extends React.Component {
 				previousPointerState,
 				input);
 
+		if (previousPointerState == null && newPointerState != null) {
+			if (!this.props.shouldTrackDrag(newPointerState)) {
+				return;
+			}
+
+			if (isValidHandler(this.props.dragDidBegin)) {
+				this.props.dragDidBegin(pointerID, newPointerState);
+			}
+		} else if (previousPointerState != null && newPointerState != null) {
+			if (isValidHandler(this.props.dragDidMove)) {
+				this.props.dragDidMove(pointerID, newPointerState);
+			}
+		} else if (previousPointerState != null && newPointerState == null) {
+			if (isValidHandler(this.props.dragDidEnd)) {
+				this.props.dragDidEnd(pointerID, newPointerState);
+			}
+		}
+
 		if (newPointerState == null) {
 			this.setState(prevState => ({
 				...prevState,
@@ -190,20 +208,6 @@ class DragCapture extends React.Component {
 			}));
 		}
 
-		const handler = (phase => {
-			switch (phase) {
-				case "begin":
-					return this.props.dragDidBegin;
-				case "move":
-					return this.props.dragDidMove;
-				case "end":
-					return this.props.dragDidEnd;
-			}
-		})(phase);
-
-		if (isValidHandler(handler)) {
-			handler(pointerID, newPointerState);
-		}
 	}
 
 	// Assumes that event handlers listed in `pointerState`
@@ -247,25 +251,33 @@ class DragCapture extends React.Component {
 // Point ::= { x: number, y: number }
 
 DragCapture.propTypes = {
-	// dragDidBegin :: (string, Point) -> ()
+	// dragDidBegin :: (string, CursorState) -> ()
 	dragDidBegin: PropTypes.func,
-	// dragDidMove :: (string, Point) -> ()
+	// dragDidMove :: (string, CursorState) -> ()
 	dragDidMove: PropTypes.func,
-	// dragDidEnd :: (string, Point) -> ()
+	// dragDidEnd :: (string, CursorState) -> ()
 	dragDidEnd: PropTypes.func,
 
-	// reduceCursorState :: (?CursorState, Input) -> CursorState
-	// where Input ::= { type: 'mouse', event: MouseEvent }
-	//               | { type: 'touch', event: TouchEvent, touch: Touch }
+	// shouldTrackDrag :: CursorState -> boolean
+	shouldTrackDrag: PropTypes.func,
+
+	// reduceCursorState :: (?CursorState, DragCapture.Input) -> CursorState
 	reduceCursorState: PropTypes.func,
 };
 
 DragCapture.defaultProps = {
+	shouldTrackDrag: _ => true,
+
 	reduceCursorState: (cursorState, input) => {
 		if (input.type === 'mouse') {
 			switch (input.event.type) {
-				case 'mousedown':
 				case 'mousemove':
+					if (cursorState == null) {
+						return null;
+					}
+					// continue
+
+				case 'mousedown':
 					return makePointerState(
 						clientPositionFromMouseEvent(input.event));
 					break;
@@ -276,8 +288,13 @@ DragCapture.defaultProps = {
 			}
 		} else if (input.type === 'touch') {
 			switch (input.event.type) {
-				case 'touchstart':
 				case 'touchmove':
+					if (cursorState == null) {
+						return null;
+					}
+					// continue
+
+				case 'touchstart':
 					return makePointerState(
 						clientPositionFromTouch(input.touch));
 					break;
