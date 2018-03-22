@@ -235,11 +235,12 @@ class DragCapture extends React.Component {
 
 	render() {
 		const {
-			className, style, children
+			id, className, style, children
 		} = this.props;
 
 		return (
 			<span
+				id={id}
 				className={className}
 				style={{ display: 'inline-block', ...style }}
 				onMouseDown={this.beginTrackingFromMouseDown}
