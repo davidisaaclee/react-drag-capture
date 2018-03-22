@@ -265,6 +265,7 @@ DragCapture.propTypes = {
 	shouldTrackDrag: PropTypes.func,
 
 	// reduceCursorState :: (?CursorState, DragCapture.Input) -> CursorState
+	// reduceCursorState :: (?CursorState, DragCapture.Input) -> Promise<CursorState>
 	reduceCursorState: PropTypes.func,
 };
 
