@@ -169,7 +169,7 @@ storiesOf('DragCapture', module)
   )))
   .add('custom should track logic', withState({}, (store) => (
 		<DragCapture
-			shouldTrackDrag={({ clientPosition }) => {
+			shouldTrackDrag={(pointerID, { clientPosition }) => {
 				// Only track when cursor begins in top-half of bounds.
 				return clientPosition.y < 150
 			}}

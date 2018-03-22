@@ -177,7 +177,7 @@ class DragCapture extends React.Component {
 				input);
 
 		if (previousPointerState == null && newPointerState != null) {
-			if (!this.props.shouldTrackDrag(newPointerState)) {
+			if (!this.props.shouldTrackDrag(pointerID, newPointerState)) {
 				return;
 			}
 
@@ -258,7 +258,7 @@ DragCapture.propTypes = {
 	// dragDidEnd :: (string, CursorState) -> ()
 	dragDidEnd: PropTypes.func,
 
-	// shouldTrackDrag :: CursorState -> boolean
+	// shouldTrackDrag :: (string, CursorState) -> boolean
 	shouldTrackDrag: PropTypes.func,
 
 	// reduceCursorState :: (?CursorState, DragCapture.Input) -> CursorState
