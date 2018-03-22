@@ -176,38 +176,41 @@ class DragCapture extends React.Component {
 				previousPointerState,
 				input);
 
-		if (previousPointerState == null && newPointerState != null) {
-			if (!this.props.shouldTrackDrag(newPointerState)) {
-				return;
-			}
+		Promise.resolve(newPointerState)
+			.then(newPointerState => {
+				if (previousPointerState == null && newPointerState != null) {
+					if (!this.props.shouldTrackDrag(newPointerState)) {
+						return;
+					}
 
-			if (isValidHandler(this.props.dragDidBegin)) {
-				this.props.dragDidBegin(pointerID, newPointerState);
-			}
-		} else if (previousPointerState != null && newPointerState != null) {
-			if (isValidHandler(this.props.dragDidMove)) {
-				this.props.dragDidMove(pointerID, newPointerState);
-			}
-		} else if (previousPointerState != null && newPointerState == null) {
-			if (isValidHandler(this.props.dragDidEnd)) {
-				this.props.dragDidEnd(pointerID, newPointerState);
-			}
-		}
-
-		if (newPointerState == null) {
-			this.setState(prevState => ({
-				...prevState,
-				pointerStates: omit(prevState.pointerStates, pointerID)
-			}));
-		} else {
-			this.setState(prevState => ({
-				pointerStates: {
-					...prevState.pointerStates,
-					[pointerID]: newPointerState
+					if (isValidHandler(this.props.dragDidBegin)) {
+						this.props.dragDidBegin(pointerID, newPointerState);
+					}
+				} else if (previousPointerState != null && newPointerState != null) {
+					if (isValidHandler(this.props.dragDidMove)) {
+						this.props.dragDidMove(pointerID, newPointerState);
+					}
+				} else if (previousPointerState != null && newPointerState == null) {
+					if (isValidHandler(this.props.dragDidEnd)) {
+						this.props.dragDidEnd(pointerID, newPointerState);
+					}
 				}
-			}));
-		}
 
+				if (newPointerState == null) {
+					this.setState(prevState => ({
+						...prevState,
+						pointerStates: omit(prevState.pointerStates, pointerID)
+					}));
+				} else {
+					this.setState(prevState => ({
+						pointerStates: {
+							...prevState.pointerStates,
+							[pointerID]: newPointerState
+						}
+					}));
+				}
+			})
+			.catch(err => console.error(err));
 	}
 
 	// Assumes that event handlers listed in `pointerState`
