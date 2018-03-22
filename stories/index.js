@@ -109,22 +109,16 @@ storiesOf('DragCapture', module)
   )))
   .add('relative position', withState({}, (store) => (
 		<RelativeDragCapture
-			dragDidBegin={(cursorID, cursorState) => {
-				cursorState
-					.then(({ relativePosition }) => {
-						store.set({ [cursorID]: relativePosition })
-					})
+			dragDidBegin={(cursorID, { relativePosition }) => {
+				store.set({ [cursorID]: relativePosition })
 			}}
-			dragDidMove={(cursorID, cursorState) => cursorState
-					.then(({ relativePosition }) => {
-						if (store.state[cursorID] != null) {
-							store.set({ [cursorID]: relativePosition });
-						}
-					})}
+			dragDidMove={(cursorID, { relativePosition }) => {
+				if (store.state[cursorID] != null) {
+					store.set({ [cursorID]: relativePosition });
+				}
+			}}
 			dragDidEnd={(cursorID, cursorState) => {
-				cursorState.then(_ => {
-					store.set({ [cursorID]: undefined });
-				});
+				store.set({ [cursorID]: undefined });
 			}}
 		>
 			<div style={{
