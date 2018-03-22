@@ -179,7 +179,7 @@ class DragCapture extends React.Component {
 		Promise.resolve(newPointerState)
 			.then(newPointerState => {
 				if (previousPointerState == null && newPointerState != null) {
-					if (!this.props.shouldTrackDrag(newPointerState)) {
+					if (!this.props.shouldTrackDrag(pointerID, newPointerState)) {
 						return;
 					}
 
